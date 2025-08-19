@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart' hide ScreenUtil;
 import 'package:intl/intl.dart';
-import 'package:k2k/Iron_smith/master_data/machines/model/machines.dart';
-import 'package:k2k/Iron_smith/master_data/machines/provider/machine_provider.dart';
-import 'package:k2k/Iron_smith/master_data/machines/view/machine_delete.dart';
+import 'package:k2k/Iron_smith/master_data/clients/model/Is_clients.dart';
+import 'package:k2k/Iron_smith/master_data/clients/provider/is_client_provider.dart';
+import 'package:k2k/Iron_smith/master_data/clients/view/is_clients_delete.dart';
 import 'package:k2k/app/routes_name.dart';
 import 'package:k2k/common/widgets/custom_card.dart';
 import 'package:k2k/utils/sreen_util.dart';
@@ -15,42 +15,60 @@ import 'package:k2k/common/list_helper/shimmer.dart';
 import 'package:k2k/common/widgets/appbar/app_bar.dart';
 import 'package:k2k/utils/theme.dart';
 
-class IsMachinesListScreen extends StatefulWidget {
-  const IsMachinesListScreen({super.key});
+class IsClientsListScreen extends StatefulWidget {
+  const IsClientsListScreen({super.key});
 
   @override
-  State<IsMachinesListScreen> createState() => _IsMachinesListScreenState();
+  State<IsClientsListScreen> createState() => _IsClientsListScreenState();
 }
 
-class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
+class _IsClientsListScreenState extends State<IsClientsListScreen> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        Provider.of<IsMachinesProvider>(
+        Provider.of<IsClientsProvider>(
           context,
           listen: false,
-        ).fetchMachines(refresh: true);
+        ).fetchClients(refresh: true);
       }
     });
   }
 
-  void _editMachine(String? machineId) {
-    if (machineId != null) {
-      print('Navigating to edit machine: $machineId');
-      context.goNamed(
-        RouteNames.isMachineEdit,
-        pathParameters: {'machineId': machineId},
+  void _editClient(String? clientId) {
+    if (clientId != null) {
+      print('Navigating to edit client: $clientId');
+      final provider = Provider.of<IsClientsProvider>(context, listen: false);
+      final client = provider.clients.firstWhere(
+        (client) => client.id == clientId,
       );
+
+      if (client.id != null) {
+        context.goNamed(RouteNames.isClientsEdit, extra: client);
+      } else {
+        print('Error: Client not found for ID $clientId');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Client not found',
+              style: TextStyle(fontSize: 14.sp),
+            ),
+            backgroundColor: AppTheme.appBarcolor,
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+          ),
+        );
+      }
     } else {
-      print('Error: machineId is null');
+      print('Error: clientId is null');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Invalid Machine ID',
-            style: TextStyle(fontSize: 14.sp),
-          ),
+          content: Text('Invalid Client ID', style: TextStyle(fontSize: 14.sp)),
           backgroundColor: AppTheme.appBarcolor,
           duration: const Duration(seconds: 2),
           behavior: SnackBarBehavior.floating,
@@ -63,8 +81,29 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
     }
   }
 
-  String _formatDateTime(DateTime dateTime) {
-    return DateFormat('dd-MM-yyyy, hh:mm a').format(dateTime);
+  String formatDateTime(String? dateTime) {
+    if (dateTime == null || dateTime.isEmpty) return 'Unknown';
+
+    try {
+      final parsed = DateTime.parse(dateTime).toLocal();
+      return DateFormat('dd-MM-yyyy, hh:mm a').format(parsed);
+    } catch (_) {
+      final possibleFormats = [
+        "yyyy-MM-dd HH:mm:ss",
+        "dd-MM-yyyy HH:mm:ss",
+        "yyyy-MM-dd",
+      ];
+
+      for (final format in possibleFormats) {
+        try {
+          final parsed = DateFormat(format).parse(dateTime, false).toLocal();
+          return DateFormat('dd-MM-yyyy, hh:mm a').format(parsed);
+        } catch (_) {}
+      }
+    }
+
+    print('Error parsing date: $dateTime');
+    return 'Invalid Date';
   }
 
   String _getCreatedBy(CreatedBy? createdBy) {
@@ -77,7 +116,7 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
         SizedBox(width: 8.w),
         Expanded(
           child: Text(
-            'Machines',
+            'Clients',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
@@ -109,15 +148,15 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
       padding: EdgeInsets.only(right: 16.w),
       child: TextButton(
         onPressed: () {
-          print('Navigating to add machine screen');
-          context.goNamed(RouteNames.isMachineAdd);
+          print('Navigating to add client screen');
+          context.goNamed(RouteNames.isClientsAdd);
         },
         child: Row(
           children: [
             Icon(Icons.add, size: 20.sp, color: AppTheme.ironSmithPrimary),
             SizedBox(width: 4.w),
             Text(
-              'Add Machine',
+              'Add Client',
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
@@ -130,24 +169,22 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
     );
   }
 
-  Widget _buildMachineCard(Machines machine) {
-    final machineId = machine.id?.oid ?? '';
-    final name = machine.name;
-    final role = machine.role;
-    final createdBy = _getCreatedBy(machine.createdBy);
-    final createdAt = machine.createdAt?.date;
+  Widget _buildClientCard(Client client) {
+    final clientId = client.id;
+    final name = client.name ?? 'Unknown';
+    final address = client.address ?? 'N/A';
+    final createdBy = _getCreatedBy(client.createdBy);
+    final createdAt = client.createdAt;
 
     return CustomCard(
       title: name,
-      leading: Icon(Icons.factory_outlined, color: Colors.black54),
-      
+      leading: Icon(Icons.apartment_outlined, color: Colors.black54),
       headerGradient: AppTheme.ironSmithGradient,
       borderRadius: 12,
       backgroundColor: AppColors.cardBackground,
       borderColor: const Color(0xFFE5E7EB),
       borderWidth: 1,
       elevation: 0,
-
       margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
       menuItems: [
         PopupMenuItem<String>(
@@ -193,10 +230,10 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
       ],
       onMenuSelected: (value) {
         if (value == 'edit') {
-          _editMachine(machineId);
+          _editClient(clientId);
         } else if (value == 'delete') {
-          print('Initiating delete for machine: $machineId');
-          IsMachineDeleteHandler.deleteMachine(context, machineId, name);
+          print('Initiating delete for client: $clientId');
+          IsClientDeleteHandler.deleteClient(context, clientId, name);
         }
       },
       bodyItems: [
@@ -207,7 +244,7 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
             borderRadius: BorderRadius.circular(12.r),
           ),
           child: Text(
-            "Role: $role",
+            "Address: $address",
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w600,
@@ -241,9 +278,9 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
               ),
               SizedBox(width: 8.w),
               Text(
-                'Created: ${_formatDateTime(createdAt)}',
+                'Created At: ${formatDateTime(createdAt)}',
                 style: TextStyle(
-                  fontSize: 13.sp,
+                  fontSize: 17.sp,
                   color: const Color(0xFF64748B),
                 ),
               ),
@@ -259,13 +296,13 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.factory_outlined,
+            Icons.person_add_alt_1_outlined,
             size: 64.sp,
             color: AppTheme.ironSmithPrimary,
           ),
           SizedBox(height: 16.h),
           Text(
-            'No Machines Found',
+            'No Clients Found',
             style: TextStyle(
               fontSize: 18.sp,
               fontWeight: FontWeight.w600,
@@ -274,14 +311,14 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
           ),
           SizedBox(height: 8.h),
           Text(
-            'Tap the button below to add your first machine!',
+            'Tap the button below to add your first client!',
             style: TextStyle(fontSize: 14.sp, color: const Color(0xFF64748B)),
           ),
           SizedBox(height: 16.h),
           AddButton(
-            text: 'Add Machine',
+            text: 'Add Client',
             icon: Icons.add,
-            route: RouteNames.isMachineAdd,
+            route: RouteNames.clients, // Fixed route name
           ),
         ],
       ),
@@ -305,10 +342,10 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
           leading: _buildBackButton(),
           action: [_buildActionButtons()],
         ),
-        body: Consumer<IsMachinesProvider>(
+        body: Consumer<IsClientsProvider>(
           builder: (context, provider, child) {
             if (provider.error != null) {
-              print('Error in IsMachinesProvider: ${provider.error}');
+              print('Error in IsClientsProvider: ${provider.error}');
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -320,7 +357,7 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      'Error Loading Machines',
+                      'Error Loading Clients',
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
@@ -344,9 +381,9 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
                       text: 'Retry',
                       icon: Icons.refresh,
                       onTap: () {
-                        print('Retrying to load machines');
+                        print('Retrying to load clients');
                         provider.clearError();
-                        provider.fetchMachines(refresh: true);
+                        provider.fetchClients(refresh: true);
                       },
                     ),
                   ],
@@ -356,23 +393,23 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
 
             return RefreshIndicator(
               onRefresh: () async {
-                print('Refreshing machines list');
-                await provider.fetchMachines(refresh: true);
+                print('Refreshing clients list');
+                await provider.fetchClients(refresh: true);
               },
               color: AppTheme.ironSmithPrimary,
               backgroundColor: Colors.white,
-              child: provider.isLoading && provider.machines.isEmpty
+              child: provider.isLoading && provider.clients.isEmpty
                   ? ListView.builder(
                       itemCount: 5,
                       itemBuilder: (context, index) => buildShimmerCard(),
                     )
-                  : provider.machines.isEmpty
+                  : provider.clients.isEmpty
                   ? _buildEmptyState()
                   : ListView.builder(
                       padding: EdgeInsets.only(bottom: 16.h),
-                      itemCount: provider.machines.length,
+                      itemCount: provider.clients.length,
                       itemBuilder: (context, index) {
-                        return _buildMachineCard(provider.machines[index]);
+                        return _buildClientCard(provider.clients[index]);
                       },
                     ),
             );

@@ -20,11 +20,9 @@ import 'package:k2k/common/date_picker.dart';
 
 class AddWorkOrderScreen extends StatefulWidget {
   const AddWorkOrderScreen({super.key});
-
   @override
   State<AddWorkOrderScreen> createState() => _AddWorkOrderScreenState();
 }
-
 class _AddWorkOrderScreenState extends State<AddWorkOrderScreen> {
   final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
   final Map<String, FocusNode> _focusNodes = {
@@ -58,7 +56,6 @@ class _AddWorkOrderScreenState extends State<AddWorkOrderScreen> {
     return Consumer<WorkOrderProvider>(
       builder: (context, workOrderProvider, child) {
         return Scaffold(
-          
           resizeToAvoidBottomInset: true,
           backgroundColor: const Color(0xFFF8FAFC),
           appBar: AppBars(

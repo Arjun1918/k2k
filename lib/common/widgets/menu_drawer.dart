@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:k2k/api_services/shared_preference/shared_preference.dart';
 import 'package:k2k/app/routes_name.dart';
+import 'package:k2k/utils/theme.dart';
 
 class MenuItem {
   final String title;
@@ -10,6 +11,7 @@ class MenuItem {
   final String? route;
   final List<SubMenuItem>? subItems;
   bool isExpanded;
+  final Color? iconColor;
 
   MenuItem({
     required this.title,
@@ -17,6 +19,7 @@ class MenuItem {
     this.route,
     this.subItems,
     this.isExpanded = false,
+    this.iconColor,
   });
 }
 
@@ -24,8 +27,9 @@ class SubMenuItem {
   final String title;
   final IconData icon;
   final String? route;
-  final List<SubMenuItem>? subItems; // Added nested sub-items support
+  final List<SubMenuItem>? subItems;
   bool isExpanded;
+  final Color? iconColor;
 
   SubMenuItem({
     required this.title,
@@ -33,15 +37,26 @@ class SubMenuItem {
     this.route,
     this.subItems,
     this.isExpanded = false,
+    this.iconColor,
   });
 }
 
 class MenuSection {
   final String? heading;
-  final String? imagePath; // Add image path for section
+  final String? imagePath;
   final List<MenuItem> items;
+  final IconData? sectionIcon;
+  final Color? sectionColor;
+  bool isExpanded;
 
-  MenuSection({this.heading, this.imagePath, required this.items});
+  MenuSection({
+    this.heading, 
+    this.imagePath, 
+    required this.items, 
+    this.sectionIcon,
+    this.sectionColor,
+    this.isExpanded = false,
+  });
 }
 
 class EnhancedMenuDrawer extends StatefulWidget {
@@ -56,8 +71,7 @@ class _EnhancedMenuDrawerState extends State<EnhancedMenuDrawer>
   late AnimationController _logoAnimationController;
   late Animation<double> _logoAnimation;
 
-  // Track current selected section for logo switching
-  String currentLogo = 'assets/images/login_image_1.png'; // Default logo
+  String currentLogo = 'assets/images/login_image_1.png';
 
   List<MenuSection> menuSections = [
     // Main Dashboard Section
@@ -66,70 +80,104 @@ class _EnhancedMenuDrawerState extends State<EnhancedMenuDrawer>
       items: [
         MenuItem(
           title: 'Dashboard',
-          icon: Icons.dashboard_outlined,
+          icon: Icons.dashboard_rounded,
           route: '/homescreen',
+          iconColor: const Color(0xFF4F46E5),
         ),
       ],
     ),
-    // Data Management Section
+    
+    // Falcon Facade Section - Collapsed by default
     MenuSection(
-      heading: "FALCON FACADE",
+      heading: "Falcon Facade",
       imagePath: "assets/images/falcon.png",
+      sectionIcon: Icons.agriculture_rounded,
+      sectionColor: const Color(0xFF10B981),
+      isExpanded: false, // Collapsed by default
       items: [
-        MenuItem(title: 'Work Order', icon: Icons.work_outline),
-        MenuItem(title: 'Job Order', icon: Icons.work_outline),
-        MenuItem(title: 'Internal Work Order', icon: Icons.assignment_outlined),
-        MenuItem(title: 'Production', icon: Icons.assignment_outlined),
-        MenuItem(title: 'Packing', icon: Icons.assignment_outlined),
-        MenuItem(title: 'Dispatch', icon: Icons.assignment_outlined),
-        MenuItem(title: 'QC check', icon: Icons.assignment_outlined),
+        MenuItem(
+          title: 'Work Order', 
+          icon: Icons.work_history_rounded,
+          iconColor:  const Color(0xFFEF4444),
+        ),
+        MenuItem(
+          title: 'Job Order', 
+          icon: Icons.assignment_turned_in_rounded,
+          iconColor:const Color(0xFFF59E0B),
+        ),
+        MenuItem(
+          title: 'Internal Work Order', 
+          icon: Icons.assignment_ind_rounded,
+          iconColor: const Color(0xFF10B981),
+        ),
+        MenuItem(
+          title: 'Production', 
+          icon: Icons.precision_manufacturing_rounded,
+          iconColor: const Color(0xFF10B981),
+        ),
+        MenuItem(
+          title: 'Packing', 
+          icon: Icons.inventory_2_rounded,
+          iconColor:const Color(0xFF3B82F6),
+        ),
+        MenuItem(
+          title: 'Dispatch', 
+          icon: Icons.local_shipping_rounded,
+          iconColor: const Color(0xFFEC4899),
+        ),
+        MenuItem(
+          title: 'QC Check', 
+          icon: Icons.verified_rounded,
+          iconColor: const Color(0xFF06B6D4),
+        ),
         MenuItem(
           title: 'Master Data',
-          icon: Icons.settings_outlined,
+          icon: Icons.settings_applications_rounded,
+          iconColor: const Color(0xFF64748B), // Gray for Master Data
           subItems: [
             SubMenuItem(
               title: 'Master Clients',
-              icon: Icons.factory_outlined,
+              icon: Icons.business_rounded,
               route: '/settings/plant',
-              isExpanded: false,
+              iconColor: const Color(0xFF64748B),
               subItems: [
                 SubMenuItem(
                   title: 'Client',
-                  icon: Icons.add_business,
+                  icon: Icons.person_add_rounded,
                   route: '/settings/plant/add-client',
-                  isExpanded: false,
+                  iconColor: const Color(0xFF64748B),
                 ),
                 SubMenuItem(
                   title: 'Projects',
-                  icon: Icons.file_copy_sharp,
+                  icon: Icons.folder_copy_rounded,
                   route: '/settings/plant/view-clients',
-                  isExpanded: false,
+                  iconColor: const Color(0xFF64748B),
                 ),
               ],
             ),
             SubMenuItem(
               title: 'Master Products',
-              icon: Icons.inventory,
+              icon: Icons.category_rounded,
               route: '/settings/users',
-              isExpanded: false,
+              iconColor: const Color.fromARGB(255, 255, 255, 255),
               subItems: [
                 SubMenuItem(
                   title: 'Systems',
-                  icon: Icons.add_box,
+                  icon: Icons.device_hub_rounded,
                   route: '/settings/products/add',
-                  isExpanded: false,
+                  iconColor: const Color(0xFF64748B),
                 ),
                 SubMenuItem(
                   title: 'Product Systems',
-                  icon: Icons.category,
+                  icon: Icons.apps_rounded,
                   route: '/settings/products/categories',
-                  isExpanded: false,
+                  iconColor: const Color(0xFF64748B),
                 ),
                 SubMenuItem(
                   title: 'Products',
-                  icon: Icons.inventory_2,
+                  icon: Icons.inventory_rounded,
                   route: '/settings/products/inventory',
-                  isExpanded: false,
+                  iconColor: const Color(0xFF64748B),
                 ),
               ],
             ),
@@ -138,166 +186,221 @@ class _EnhancedMenuDrawerState extends State<EnhancedMenuDrawer>
       ],
     ),
 
+    // Konkrete Klinkers Section - Collapsed by default
     MenuSection(
-      heading: "KONKRETE KLINKERS",
+      heading: "Konkrete Klinkers",
       imagePath: "assets/images/konkrete_klinkers.png",
+      sectionIcon: Icons.foundation_rounded,
+      sectionColor: const Color(0xFFF59E0B),
+      isExpanded: false, // Collapsed by default
       items: [
         MenuItem(
           title: 'Work Orders',
-          icon: Icons.person_outline,
+          icon: Icons.work_history_rounded,
           route: RouteNames.workorders,
+          iconColor: const Color(0xFFEF4444), // Red for Work Order (same as Falcon)
         ),
         MenuItem(
           title: 'Job Order/Planning',
-          icon: Icons.shopping_bag_outlined,
+          icon: Icons.schedule_rounded,
           route: RouteNames.jobOrder,
+          iconColor: const Color(0xFFF59E0B), // Orange for Job Order (same as Falcon)
         ),
         MenuItem(
           title: 'Production',
-          icon: Icons.bookmarks_outlined,
+          icon: Icons.precision_manufacturing_rounded,
           route: RouteNames.production,
+          iconColor: const Color(0xFF10B981), // Green for Production (same as Falcon)
         ),
         MenuItem(
           title: 'QC Check',
-          icon: Icons.miscellaneous_services_outlined,
+          icon: Icons.fact_check_rounded,
           route: RouteNames.qcCheck,
+          iconColor: const Color(0xFF06B6D4), // Cyan for QC Check (same as Falcon)
         ),
         MenuItem(
           title: 'Packing',
-          icon: Icons.shopping_cart_outlined,
+          icon: Icons.all_inbox_rounded,
           route: RouteNames.packing,
+          iconColor: const Color(0xFF3B82F6), // Blue for Packing (consistent everywhere)
         ),
         MenuItem(
           title: 'Dispatch',
-          icon: Icons.shopping_cart_outlined,
+          icon: Icons.local_shipping_rounded,
           route: RouteNames.dispatch,
+          iconColor: const Color(0xFFEC4899), // Pink for Dispatch (same as Falcon)
         ),
         MenuItem(
           title: 'Inventory',
-          icon: Icons.shopping_cart_outlined,
+          icon: Icons.inventory_2_rounded,
           route: RouteNames.inventory,
+          iconColor: const Color(0xFF8B5CF6), // Purple for Inventory
         ),
         MenuItem(
           title: 'Stock Management',
-          icon: Icons.shopping_cart_outlined,
+          icon: Icons.store_rounded,
           route: RouteNames.stockmanagement,
+          iconColor: const Color(0xFF059669), // Emerald for Stock Management
         ),
         MenuItem(
           title: "Master Data",
-          icon: Icons.file_copy_outlined,
+          icon: Icons.settings_applications_rounded,
+          iconColor: const Color(0xFF64748B), // Gray for Master Data (consistent)
           subItems: [
             SubMenuItem(
               title: 'Plants',
-              icon: Icons.factory_outlined,
-              route: '',
-              isExpanded: false,
+              icon: Icons.factory_rounded,
+              iconColor: const Color(0xFF64748B),
               subItems: [
                 SubMenuItem(
                   title: 'Plants',
-                  icon: Icons.add_business,
+                  icon: Icons.business_rounded,
                   route: RouteNames.plants,
-                  isExpanded: false,
+                  iconColor: const Color(0xFF64748B),
                 ),
                 SubMenuItem(
                   title: 'Machines',
-                  icon: Icons.visibility,
+                  icon: Icons.precision_manufacturing_rounded,
                   route: RouteNames.machines,
-                  isExpanded: false,
+                  iconColor: const Color(0xFF64748B),
                 ),
               ],
             ),
             SubMenuItem(
               title: 'Clients',
-              icon: Icons.person_outline_rounded,
+              icon: Icons.people_rounded,
               route: RouteNames.clients,
-              isExpanded: false,
+              iconColor: const Color(0xFF64748B),
             ),
             SubMenuItem(
               title: 'Projects',
-              icon: Icons.assignment_outlined,
+              icon: Icons.folder_rounded,
               route: RouteNames.projects,
-              isExpanded: false,
+              iconColor: const Color(0xFF64748B),
             ),
             SubMenuItem(
               title: 'Products',
-              icon: Icons.inventory_2_outlined,
+              icon: Icons.category_rounded,
               route: RouteNames.products,
-              isExpanded: false,
+              iconColor: const Color(0xFF64748B),
             ),
           ],
         ),
       ],
     ),
 
+    // Iron Smith Section - Collapsed by default
     MenuSection(
-      heading: "IRON SMITH",
+      heading: "Iron Smith",
       imagePath: "assets/images/iron_smith.png",
+      sectionIcon: Icons.construction_rounded,
+      sectionColor: const Color(0xFFEF4444),
+      isExpanded: false, // Collapsed by default
       items: [
-        MenuItem(title: 'Work Order', icon: Icons.work_outline),
-        MenuItem(title: 'Job Order/planning', icon: Icons.assignment_outlined),
-        MenuItem(title: 'Production', icon: Icons.assignment_outlined),
-        MenuItem(title: 'QC Check', icon: Icons.assignment_outlined),
-        MenuItem(title: 'Packing', icon: Icons.assignment_outlined),
-        MenuItem(title: 'Dispatch', icon: Icons.assignment_outlined),
-        MenuItem(title: 'Dispatch Invoice', icon: Icons.assignment_outlined),
-        MenuItem(title: 'Inventory', icon: Icons.assignment_outlined),
+        MenuItem(
+          title: 'Work Order', 
+          icon: Icons.work_history_rounded,
+          iconColor: const Color(0xFFEF4444),
+        ),
+        MenuItem(
+          title: 'Job Order/Planning', 
+          icon: Icons.schedule_rounded,
+          iconColor:const Color(0xFFF59E0B),
+        ),
+        MenuItem(
+          title: 'Production', 
+          icon: Icons.precision_manufacturing_rounded,
+          iconColor:const Color(0xFF10B981),
+        ),
+        MenuItem(
+          title: 'QC Check', 
+          icon: Icons.verified_rounded,
+          iconColor: const Color(0xFF06B6D4),
+        ),
+        MenuItem(
+          title: 'Packing', 
+          icon: Icons.all_inbox_rounded,
+          iconColor:const Color(0xFF3B82F6),
+        ),
+        MenuItem(
+          title: 'Dispatch', 
+          icon: Icons.local_shipping_rounded,
+          iconColor:const Color(0xFFEC4899),
+        ),
+        MenuItem(
+          title: 'Dispatch Invoice', 
+          icon: Icons.receipt_long_rounded,
+          iconColor: const Color(0xFFEF4444),
+        ),
+        MenuItem(
+          title: 'Inventory', 
+          icon: Icons.inventory_2_rounded,
+          iconColor: const Color(0xFF8B5CF6),
+        ),
         MenuItem(
           title: 'Master Data',
-          icon: Icons.assignment_outlined,
+          icon: Icons.settings_applications_rounded,
+          iconColor: const Color(0xFF64748B), // Gray for Master Data (consistent)
           subItems: [
             SubMenuItem(
               title: 'Machines',
-              icon: Icons.factory_outlined,
+              icon: Icons.precision_manufacturing_rounded,
               route: RouteNames.ismachine,
-              isExpanded: false,
+              iconColor: const Color(0xFF64748B),
             ),
             SubMenuItem(
               title: 'Clients',
-              icon: Icons.add_business,
-              route: '/settings/plant/add-client',
-              isExpanded: false,
+              icon: Icons.people_rounded,
+              route: RouteNames.isClients,
+              iconColor: const Color(0xFF64748B),
             ),
             SubMenuItem(
               title: 'Projects',
-              icon: Icons.visibility,
-              route: '/settings/plant/view-clients',
-              isExpanded: false,
+              icon: Icons.folder_rounded,
+              route: RouteNames.isProjetct,
+              iconColor: const Color(0xFF64748B),
             ),
             SubMenuItem(
               title: 'Shapes',
-              icon: Icons.visibility,
+              icon: Icons.auto_fix_high_rounded,
               route: '/settings/plant/view-clients',
-              isExpanded: false,
+              iconColor: const Color(0xFF64748B),
             ),
           ],
         ),
       ],
     ),
+    
+    // Users Section - Collapsed by default
     MenuSection(
-      heading: "USERS",
+      heading: "Users",
+      sectionIcon: Icons.people_rounded,
+      sectionColor: const Color(0xFF8B5CF6),
+      isExpanded: false, // Collapsed by default
       items: [
         MenuItem(
-          title: 'Users',
-          icon: Icons.work_outline,
+          title: 'User Management',
+          icon: Icons.admin_panel_settings_rounded,
           route: '/settings/users',
+          iconColor: const Color(0xFF8B5CF6),
           subItems: [
             SubMenuItem(
               title: 'Users',
-              icon: Icons.supervised_user_circle_outlined,
+              icon: Icons.person_rounded,
               route: '/settings/plant',
-              isExpanded: false,
+              iconColor: const Color(0xFF8B5CF6),
             ),
             SubMenuItem(
               title: 'Clients',
-              icon: Icons.add_business,
+              icon: Icons.business_rounded,
               route: '/settings/plant/add-client',
-              isExpanded: false,
+              iconColor: const Color(0xFF8B5CF6),
             ),
             SubMenuItem(
               title: 'Projects',
-              icon: Icons.file_copy_sharp,
+              icon: Icons.folder_rounded,
               route: '/settings/plant/view-clients',
-              isExpanded: false,
+              iconColor: const Color(0xFF8B5CF6),
             ),
           ],
         ),
@@ -332,7 +435,6 @@ class _EnhancedMenuDrawerState extends State<EnhancedMenuDrawer>
       setState(() {
         currentLogo = imagePath;
       });
-      // Restart logo animation for visual feedback
       _logoAnimationController.reset();
       _logoAnimationController.forward();
     }
@@ -340,19 +442,16 @@ class _EnhancedMenuDrawerState extends State<EnhancedMenuDrawer>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
     return SafeArea(
       child: SizedBox(
         width: 300.w,
         child: Drawer(
-          backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+          backgroundColor: const Color(0xFF1E293B), // Dark background like screenshot
           child: Column(
             children: [
-              // Logo Section - Dynamic logo based on selection
+              // Logo Section
               Container(
-                padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+                padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
                 child: AnimatedBuilder(
                   animation: _logoAnimation,
                   builder: (context, child) {
@@ -367,7 +466,7 @@ class _EnhancedMenuDrawerState extends State<EnhancedMenuDrawer>
                           return Icon(
                             Icons.precision_manufacturing_outlined,
                             size: 28.sp,
-                            color: isDark ? Colors.white : Colors.grey.shade700,
+                            color: Colors.white,
                           );
                         },
                       ),
@@ -376,96 +475,111 @@ class _EnhancedMenuDrawerState extends State<EnhancedMenuDrawer>
                 ),
               ),
 
-              // Menu Sections - Reduced spacing
+              // Menu Sections
               Expanded(
                 child: ListView.builder(
-                  padding: EdgeInsets.symmetric(vertical: 4.h),
+                  padding: EdgeInsets.symmetric(vertical: 8.h),
                   itemCount: menuSections.length,
                   itemBuilder: (context, sectionIndex) {
                     final section = menuSections[sectionIndex];
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Section Heading - Image instead of text
-                        if (section.heading != null &&
-                            section.imagePath != null)
+                        // Main Section Header (Clickable for expand/collapse)
+                        if (section.heading != null)
                           Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20.w,
-                              vertical: 12.h, // Increased vertical padding
-                            ),
-                            margin: EdgeInsets.only(
-                              top: sectionIndex == 0 ? 0 : 8.h,
-                            ),
-                            child: Image.asset(
-                              section.imagePath!,
-                              width: 250.w, // Even wider for better visibility
-                              height: 45.h, // Taller for better proportion
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) {
-                                // Fallback to text if image fails to load
-                                return Text(
-                                  section.heading!,
-                                  style: TextStyle(
-                                    color: isDark
-                                        ? Colors.grey.shade400
-                                        : Colors.grey.shade600,
-                                    fontSize: 15.sp,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.8,
+                            margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    section.isExpanded = !section.isExpanded;
+                                  });
+                                  if (section.isExpanded && section.imagePath != null) {
+                                    _updateLogo(section.imagePath);
+                                  }
+                                },
+                                borderRadius: BorderRadius.circular(12.r),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16.w,
+                                    vertical: 12.h,
                                   ),
-                                );
-                              },
-                            ),
-                          ),
-                        // Fallback for sections without images
-                        if (section.heading != null &&
-                            section.imagePath == null)
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20.w,
-                              vertical: 8.h,
-                            ),
-                            margin: EdgeInsets.only(
-                              top: sectionIndex == 0 ? 0 : 8.h,
-                            ),
-                            child: Text(
-                              section.heading!,
-                              style: TextStyle(
-                                color: isDark
-                                    ? Colors.grey.shade400
-                                    : Colors.grey.shade600,
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.8,
+                                  decoration: BoxDecoration(
+                                    color: section.isExpanded 
+                                      ? section.sectionColor?.withOpacity(0.1)
+                                      : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(8.w),
+                                        decoration: BoxDecoration(
+                                          color: section.sectionColor?.withOpacity(0.2) ?? 
+                                                 Colors.grey.withOpacity(0.2),
+                                          borderRadius: BorderRadius.circular(8.r),
+                                        ),
+                                        child: Icon(
+                                          section.sectionIcon ?? Icons.folder_rounded,
+                                          color: section.sectionColor ?? Colors.grey,
+                                          size: 20.sp,
+                                        ),
+                                      ),
+                                      SizedBox(width: 12.w),
+                                      Expanded(
+                                        child: Text(
+                                          section.heading!,
+                                          style: TextStyle(
+                                            color: section.isExpanded 
+                                              ? section.sectionColor 
+                                              : Colors.grey.shade400,
+                                            fontSize: 16.sp,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                      AnimatedRotation(
+                                        turns: section.isExpanded ? 0.5 : 0,
+                                        duration: const Duration(milliseconds: 200),
+                                        child: Icon(
+                                          Icons.keyboard_arrow_down_rounded,
+                                          color: section.isExpanded 
+                                            ? section.sectionColor 
+                                            : Colors.grey.shade500,
+                                          size: 24.sp,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        // Section Items
-                        ...section.items
-                            .map(
-                              (item) => _buildMenuItem(
-                                item,
-                                isDark,
-                                0,
-                                section.imagePath,
-                              ),
-                            )
-                            .toList(),
+                        
+                        // Section Items - Only show if expanded or no heading
+                        if (section.heading == null || section.isExpanded)
+                          ...section.items
+                              .map((item) => _buildMenuItem(
+                                    item,
+                                    0,
+                                    section.imagePath,
+                                  ))
+                              .toList(),
                       ],
                     );
                   },
                 ),
               ),
 
+              // Logout Button
               Container(
-                padding: EdgeInsets.all(12.w),
+                padding: EdgeInsets.all(16.w),
                 decoration: BoxDecoration(
                   border: Border(
                     top: BorderSide(
-                      color: isDark
-                          ? Colors.grey.shade700
-                          : Colors.grey.shade200,
+                      color: Colors.grey.shade700,
                       width: 1,
                     ),
                   ),
@@ -473,15 +587,11 @@ class _EnhancedMenuDrawerState extends State<EnhancedMenuDrawer>
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Color(0xFF3B82F6), Color(0xFF8B5CF6)],
-                    ),
+                    gradient: AppTheme.primaryGradient,
                     borderRadius: BorderRadius.circular(12.r),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF3B82F6).withOpacity(0.3),
+                        color: const Color(0xFFEF4444).withOpacity(0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -495,21 +605,21 @@ class _EnhancedMenuDrawerState extends State<EnhancedMenuDrawer>
                       },
                       borderRadius: BorderRadius.circular(12.r),
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 10.h),
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              Icons.logout_outlined,
+                              Icons.logout_rounded,
                               color: Colors.white,
-                              size: 18.sp,
+                              size: 20.sp,
                             ),
                             SizedBox(width: 8.w),
                             Text(
                               'Logout',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 15.sp,
+                                fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -527,102 +637,98 @@ class _EnhancedMenuDrawerState extends State<EnhancedMenuDrawer>
     );
   }
 
-  Widget _buildMenuItem(
-    MenuItem item,
-    bool isDark,
-    int level,
-    String? sectionImagePath,
-  ) {
+  Widget _buildMenuItem(MenuItem item, int level, String? sectionImagePath) {
     return Column(
       children: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          margin: EdgeInsets.symmetric(horizontal: 6.w, vertical: 1.h),
-          decoration: BoxDecoration(
-            color: item.isExpanded
-                ? (isDark ? Colors.grey.shade800 : Colors.grey.shade50)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(10.r),
-          ),
-          child: ListTile(
-            leading: Container(
-              padding: EdgeInsets.all(6.w),
-              decoration: BoxDecoration(
-                color: item.isExpanded
-                    ? const Color(0xFF3B82F6).withOpacity(0.1)
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(6.r),
-              ),
-              child: Icon(
-                item.icon,
-                color: item.isExpanded
-                    ? const Color(0xFF3B82F6)
-                    : (isDark ? Colors.white70 : Colors.grey.shade700),
-                size: 18.sp,
-              ),
-            ),
-            title: Text(
-              item.title,
-              style: TextStyle(
-                color: item.isExpanded
-                    ? const Color(0xFF3B82F6)
-                    : (isDark ? Colors.white : Colors.grey.shade800),
-                fontSize: 15.sp,
-                fontWeight: item.isExpanded ? FontWeight.w600 : FontWeight.w500,
-              ),
-            ),
-            trailing: item.subItems != null
-                ? AnimatedRotation(
-                    turns: item.isExpanded ? 0.5 : 0,
-                    duration: const Duration(milliseconds: 200),
-                    child: Icon(
-                      Icons.expand_more,
-                      color: isDark ? Colors.white70 : Colors.grey.shade600,
-                      size: 18.sp,
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 1.h),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                if (item.subItems != null) {
+                  setState(() {
+                    item.isExpanded = !item.isExpanded;
+                  });
+                  if (item.isExpanded && sectionImagePath != null) {
+                    _updateLogo(sectionImagePath);
+                  }
+                } else {
+                  if (sectionImagePath != null) {
+                    _updateLogo(sectionImagePath);
+                  }
+                  Navigator.pop(context);
+                  if (item.route != null) {
+                    context.push(item.route!);
+                  }
+                  FocusScope.of(context).unfocus();
+                }
+              },
+              borderRadius: BorderRadius.circular(10.r),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  color: item.isExpanded
+                      ? Colors.grey.shade800.withOpacity(0.3)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(6.w),
+                      decoration: BoxDecoration(
+                        color: item.iconColor?.withOpacity(0.2) ?? 
+                               Colors.grey.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(6.r),
+                      ),
+                      child: Icon(
+                        item.icon,
+                        color: item.iconColor ?? Colors.grey.shade400,
+                        size: 18.sp,
+                      ),
                     ),
-                  )
-                : null,
-            onTap: () {
-              if (item.subItems != null) {
-                setState(() {
-                  item.isExpanded = !item.isExpanded;
-                });
-                // Update logo when expanding a menu item
-                if (item.isExpanded && sectionImagePath != null) {
-                  _updateLogo(sectionImagePath);
-                }
-              } else {
-                // Update logo when selecting a menu item
-                if (sectionImagePath != null) {
-                  _updateLogo(sectionImagePath);
-                }
-                Navigator.pop(context);
-                if (item.route != null) {
-                  context.push(item.route!);
-                }
-                FocusScope.of(context).unfocus();
-              }
-            },
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 12.w,
-              vertical: 2.h,
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Text(
+                        item.title,
+                        style: TextStyle(
+                          color: item.isExpanded
+                              ? item.iconColor ?? Colors.white
+                              : Colors.grey.shade300,
+                          fontSize: 15.sp,
+                          fontWeight: item.isExpanded 
+                            ? FontWeight.w600 
+                            : FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    if (item.subItems != null)
+                      AnimatedRotation(
+                        turns: item.isExpanded ? 0.5 : 0,
+                        duration: const Duration(milliseconds: 200),
+                        child: Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: Colors.grey.shade500,
+                          size: 20.sp,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
             ),
-            dense: true,
           ),
         ),
         if (item.subItems != null && item.isExpanded)
           Container(
-            margin: EdgeInsets.only(left: 16.w, right: 6.w),
+            margin: EdgeInsets.only(left: 24.w, right: 8.w),
             child: Column(
               children: item.subItems!
-                  .map(
-                    (subItem) => _buildSubMenuItem(
-                      subItem,
-                      isDark,
-                      level + 1,
-                      sectionImagePath,
-                    ),
-                  )
+                  .map((subItem) => _buildSubMenuItem(
+                        subItem,
+                        level + 1,
+                        sectionImagePath,
+                      ))
                   .toList(),
             ),
           ),
@@ -630,94 +736,94 @@ class _EnhancedMenuDrawerState extends State<EnhancedMenuDrawer>
     );
   }
 
-  Widget _buildSubMenuItem(
-    SubMenuItem subItem,
-    bool isDark,
-    int level,
-    String? sectionImagePath,
-  ) {
+  Widget _buildSubMenuItem(SubMenuItem subItem, int level, String? sectionImagePath) {
     double leftPadding = (level * 12.0).w;
 
     return Column(
       children: [
         Container(
           margin: EdgeInsets.only(bottom: 1.h),
-          decoration: BoxDecoration(
-            color: subItem.isExpanded
-                ? (isDark
-                      ? Colors.grey.shade800.withOpacity(0.5)
-                      : Colors.grey.shade100)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(8.r),
-          ),
-          child: ListTile(
-            leading: Container(
-              padding: EdgeInsets.all(4.w),
-              decoration: BoxDecoration(
-                color: subItem.isExpanded
-                    ? const Color(0xFF3B82F6).withOpacity(0.1)
-                    : const Color(0xFF3B82F6).withOpacity(0.05),
-                borderRadius: BorderRadius.circular(4.r),
-              ),
-              child: Icon(
-                subItem.icon,
-                color: subItem.isExpanded
-                    ? const Color(0xFF3B82F6)
-                    : const Color(0xFF3B82F6).withOpacity(0.7),
-                size: 14.sp,
-              ),
-            ),
-            title: Text(
-              subItem.title,
-              style: TextStyle(
-                color: subItem.isExpanded
-                    ? const Color(0xFF3B82F6)
-                    : (isDark ? Colors.white70 : Colors.grey.shade700),
-                fontSize: 14.sp,
-                fontWeight: subItem.isExpanded
-                    ? FontWeight.w600
-                    : FontWeight.w500,
-              ),
-            ),
-            trailing: subItem.subItems != null
-                ? AnimatedRotation(
-                    turns: subItem.isExpanded ? 0.5 : 0,
-                    duration: const Duration(milliseconds: 200),
-                    child: Icon(
-                      Icons.expand_more,
-                      color: isDark ? Colors.white70 : Colors.grey.shade600,
-                      size: 16.sp,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                if (subItem.subItems != null) {
+                  setState(() {
+                    subItem.isExpanded = !subItem.isExpanded;
+                  });
+                  if (subItem.isExpanded && sectionImagePath != null) {
+                    _updateLogo(sectionImagePath);
+                  }
+                } else {
+                  if (sectionImagePath != null) {
+                    _updateLogo(sectionImagePath);
+                  }
+                  Navigator.pop(context);
+                  if (subItem.route != null) {
+                    context.push(subItem.route!);
+                  }
+                  FocusScope.of(context).unfocus();
+                }
+              },
+              borderRadius: BorderRadius.circular(8.r),
+              child: Container(
+                padding: EdgeInsets.only(
+                  left: leftPadding,
+                  right: 8.w,
+                  top: 6.h,
+                  bottom: 6.h,
+                ),
+                decoration: BoxDecoration(
+                  color: subItem.isExpanded
+                      ? Colors.grey.shade800.withOpacity(0.2)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(4.w),
+                      decoration: BoxDecoration(
+                        color: subItem.iconColor?.withOpacity(0.1) ?? 
+                               Colors.grey.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(4.r),
+                      ),
+                      child: Icon(
+                        subItem.icon,
+                        color: subItem.iconColor?.withOpacity(0.8) ?? 
+                               Colors.grey.shade400,
+                        size: 14.sp,
+                      ),
                     ),
-                  )
-                : null,
-            onTap: () {
-              if (subItem.subItems != null) {
-                setState(() {
-                  subItem.isExpanded = !subItem.isExpanded;
-                });
-                // Update logo when expanding a sub menu item
-                if (subItem.isExpanded && sectionImagePath != null) {
-                  _updateLogo(sectionImagePath);
-                }
-              } else {
-                // Update logo when selecting a sub menu item
-                if (sectionImagePath != null) {
-                  _updateLogo(sectionImagePath);
-                }
-                Navigator.pop(context);
-                if (subItem.route != null) {
-                  context.push(subItem.route!);
-                }
-                FocusScope.of(context).unfocus();
-              }
-            },
-            contentPadding: EdgeInsets.only(
-              left: leftPadding,
-              right: 8.w,
-              top: 1.h,
-              bottom: 1.h,
+                    SizedBox(width: 8.w),
+                    Expanded(
+                      child: Text(
+                        subItem.title,
+                        style: TextStyle(
+                          color: subItem.isExpanded
+                              ? subItem.iconColor
+                              : Colors.grey.shade400,
+                          fontSize: 14.sp,
+                          fontWeight: subItem.isExpanded
+                              ? FontWeight.w600
+                              : FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    if (subItem.subItems != null)
+                      AnimatedRotation(
+                        turns: subItem.isExpanded ? 0.5 : 0,
+                        duration: const Duration(milliseconds: 200),
+                        child: Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: Colors.grey.shade600,
+                          size: 16.sp,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
             ),
-            dense: true,
           ),
         ),
         // Nested sub-items
@@ -726,14 +832,11 @@ class _EnhancedMenuDrawerState extends State<EnhancedMenuDrawer>
             margin: EdgeInsets.only(left: 12.w),
             child: Column(
               children: subItem.subItems!
-                  .map(
-                    (nestedSubItem) => _buildSubMenuItem(
-                      nestedSubItem,
-                      isDark,
-                      level + 1,
-                      sectionImagePath,
-                    ),
-                  )
+                  .map((nestedSubItem) => _buildSubMenuItem(
+                        nestedSubItem,
+                        level + 1,
+                        sectionImagePath,
+                      ))
                   .toList(),
             ),
           ),
@@ -741,4 +844,3 @@ class _EnhancedMenuDrawerState extends State<EnhancedMenuDrawer>
     );
   }
 }
-

@@ -59,4 +59,13 @@ class RouteNames {
   //IRON SMITH//
   static const String ismachine = "/ismachine";
   static const String isMachineAdd = "/isMachineAdd";
+  static const String isMachineEdit = "/ismachines/edit/:machineId";
+  //clients
+  static const String isClients = "/isclients";
+  static const String isClientsAdd = "/isclientsAdd";
+  static const String isClientsEdit = '/clients/edit';
+
+  //projects
+  static const String isProjetct = '/isProjetct';
+  static const String isProjectAdd = "/isprojectAdd";
 }

@@ -1,70 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart' hide ScreenUtil;
 import 'package:intl/intl.dart';
-import 'package:k2k/Iron_smith/master_data/machines/model/machines.dart';
-import 'package:k2k/Iron_smith/master_data/machines/provider/machine_provider.dart';
-import 'package:k2k/Iron_smith/master_data/machines/view/machine_delete.dart';
+import 'package:k2k/Iron_smith/master_data/projects/model/is_project_model.dart';
+import 'package:k2k/Iron_smith/master_data/projects/provider/is_project_provider.dart';
+import 'package:k2k/Iron_smith/master_data/projects/view/is_project_delete_screen.dart';
 import 'package:k2k/app/routes_name.dart';
 import 'package:k2k/common/widgets/custom_card.dart';
 import 'package:k2k/utils/sreen_util.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import 'package:k2k/common/list_helper/add_button.dart';
 import 'package:k2k/common/list_helper/refresh.dart';
 import 'package:k2k/common/list_helper/shimmer.dart';
 import 'package:k2k/common/widgets/appbar/app_bar.dart';
 import 'package:k2k/utils/theme.dart';
 
-class IsMachinesListScreen extends StatefulWidget {
-  const IsMachinesListScreen({super.key});
+class IsProjectsListScreen extends StatefulWidget {
+  const IsProjectsListScreen({super.key});
 
   @override
-  State<IsMachinesListScreen> createState() => _IsMachinesListScreenState();
+  State<IsProjectsListScreen> createState() => _IsProjectsListScreenState();
 }
 
-class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
+class _IsProjectsListScreenState extends State<IsProjectsListScreen> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        Provider.of<IsMachinesProvider>(
+        Provider.of<IsProjectsProvider>(
           context,
           listen: false,
-        ).fetchMachines(refresh: true);
+        ).fetchProjects(refresh: true);
       }
     });
   }
 
-  void _editMachine(String? machineId) {
-    if (machineId != null) {
-      print('Navigating to edit machine: $machineId');
-      context.goNamed(
-        RouteNames.isMachineEdit,
-        pathParameters: {'machineId': machineId},
-      );
-    } else {
-      print('Error: machineId is null');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Invalid Machine ID',
-            style: TextStyle(fontSize: 14.sp),
-          ),
-          backgroundColor: AppTheme.appBarcolor,
-          duration: const Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.r),
-          ),
-          margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-        ),
-      );
+  // void _editProject(String? projectId) {
+  //   if (projectId != null) {
+  //     print('Navigating to edit project: $projectId');
+  //     context.goNamed(
+  //       RouteNames.isProjectEdit,
+  //       pathParameters: {'projectId': projectId},
+  //     );
+  //   } else {
+  //     print('Error: projectId is null');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text(
+  //           'Invalid Project ID',
+  //           style: TextStyle(fontSize: 14.sp),
+  //         ),
+  //         backgroundColor: AppTheme.appBarcolor,
+  //         duration: const Duration(seconds: 2),
+  //         behavior: SnackBarBehavior.floating,
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(8.r),
+  //         ),
+  //         margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+  //       ),
+  //     );
+  //   }
+  // }
+  String _formatDateTime(String createdAt) {
+    try {
+      // Parse the input string with the expected format
+      final dateFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
+      final dateTime = dateFormat.parse(createdAt);
+      // Format the DateTime object to the desired output format
+      return DateFormat('dd-MM-yyyy, hh:mm a').format(dateTime);
+    } catch (e) {
+      print('Error parsing date: $e');
+      return 'Invalid Date';
     }
-  }
-
-  String _formatDateTime(DateTime dateTime) {
-    return DateFormat('dd-MM-yyyy, hh:mm a').format(dateTime);
   }
 
   String _getCreatedBy(CreatedBy? createdBy) {
@@ -77,7 +84,7 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
         SizedBox(width: 8.w),
         Expanded(
           child: Text(
-            'Machines',
+            'Projects',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
@@ -104,50 +111,48 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
     );
   }
 
-  Widget _buildActionButtons() {
-    return Padding(
-      padding: EdgeInsets.only(right: 16.w),
-      child: TextButton(
-        onPressed: () {
-          print('Navigating to add machine screen');
-          context.goNamed(RouteNames.isMachineAdd);
-        },
-        child: Row(
-          children: [
-            Icon(Icons.add, size: 20.sp, color: AppTheme.ironSmithPrimary),
-            SizedBox(width: 4.w),
-            Text(
-              'Add Machine',
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.ironSmithPrimary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildActionButtons() {
+  //   return Padding(
+  //     padding: EdgeInsets.only(right: 16.w),
+  //     child: TextButton(
+  //       onPressed: () {
+  //         print('Navigating to add project screen');
+  //         context.goNamed(RouteNames.isProjectAdd);
+  //       },
+  //       child: Row(
+  //         children: [
+  //           Icon(Icons.add, size: 20.sp, color: AppTheme.ironSmithPrimary),
+  //           SizedBox(width: 4.w),
+  //           Text(
+  //             'Add Project',
+  //             style: TextStyle(
+  //               fontSize: 16.sp,
+  //               fontWeight: FontWeight.w600,
+  //               color: AppTheme.ironSmithPrimary,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  Widget _buildMachineCard(Machines machine) {
-    final machineId = machine.id?.oid ?? '';
-    final name = machine.name;
-    final role = machine.role;
-    final createdBy = _getCreatedBy(machine.createdBy);
-    final createdAt = machine.createdAt?.date;
-
+  Widget _buildProjectCard(Project project) {
+    final projectId = project.id;
+    final name = project.name;
+    final clientName = project.client.name;
+    final address = project.address;
+    final createdBy = _getCreatedBy(project.createdBy);
+    final createdAt = project.createdAt;
     return CustomCard(
       title: name,
-      leading: Icon(Icons.factory_outlined, color: Colors.black54),
-      
+      leading: const Icon(Icons.work_outline, color: Colors.black54),
       headerGradient: AppTheme.ironSmithGradient,
       borderRadius: 12,
       backgroundColor: AppColors.cardBackground,
       borderColor: const Color(0xFFE5E7EB),
       borderWidth: 1,
       elevation: 0,
-
       margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
       menuItems: [
         PopupMenuItem<String>(
@@ -193,10 +198,10 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
       ],
       onMenuSelected: (value) {
         if (value == 'edit') {
-          _editMachine(machineId);
+          print('Edit project: $projectId (functionality not implemented)');
         } else if (value == 'delete') {
-          print('Initiating delete for machine: $machineId');
-          IsMachineDeleteHandler.deleteMachine(context, machineId, name);
+          print('Initiating delete for project: $projectId');
+          IsProjectDeleteHandler.deleteProject(context, projectId, name);
         }
       },
       bodyItems: [
@@ -207,13 +212,35 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
             borderRadius: BorderRadius.circular(12.r),
           ),
           child: Text(
-            "Role: $role",
+            "Client: $clientName",
             style: TextStyle(
-              fontSize: 14.sp,
+              fontSize: 16.sp,
               fontWeight: FontWeight.w600,
               color: AppTheme.ironSmithSecondary,
             ),
           ),
+        ),
+        SizedBox(height: 6.h),
+        Row(
+          children: [
+            Icon(
+              Icons.location_on_outlined,
+              size: 16.sp,
+              color: const Color(0xFF64748B),
+            ),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: Text(
+                'Address: $address',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  color: const Color(0xFF64748B),
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
         ),
         SizedBox(height: 6.h),
         Row(
@@ -231,24 +258,20 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
           ],
         ),
         SizedBox(height: 6.h),
-        if (createdAt != null)
-          Row(
-            children: [
-              Icon(
-                Icons.access_time_outlined,
-                size: 16.sp,
-                color: const Color(0xFF64748B),
-              ),
-              SizedBox(width: 8.w),
-              Text(
-                'Created: ${_formatDateTime(createdAt)}',
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  color: const Color(0xFF64748B),
-                ),
-              ),
-            ],
-          ),
+        Row(
+          children: [
+            Icon(
+              Icons.access_time_outlined,
+              size: 16.sp,
+              color: const Color(0xFF64748B),
+            ),
+            SizedBox(width: 8.w),
+            Text(
+              'Created: ${_formatDateTime(createdAt)}',
+              style: TextStyle(fontSize: 13.sp, color: const Color(0xFF64748B)),
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -265,7 +288,7 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
           ),
           SizedBox(height: 16.h),
           Text(
-            'No Machines Found',
+            'No Projects Found',
             style: TextStyle(
               fontSize: 18.sp,
               fontWeight: FontWeight.w600,
@@ -274,15 +297,15 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
           ),
           SizedBox(height: 8.h),
           Text(
-            'Tap the button below to add your first machine!',
+            'Tap the button below to add your first project!',
             style: TextStyle(fontSize: 14.sp, color: const Color(0xFF64748B)),
           ),
           SizedBox(height: 16.h),
-          AddButton(
-            text: 'Add Machine',
-            icon: Icons.add,
-            route: RouteNames.isMachineAdd,
-          ),
+          // AddButton(
+          //   text: 'Add Project',
+          //   icon: Icons.add,
+          //   route: RouteNames.isProjectAdd,
+          // ),
         ],
       ),
     );
@@ -305,10 +328,10 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
           leading: _buildBackButton(),
           action: [_buildActionButtons()],
         ),
-        body: Consumer<IsMachinesProvider>(
+        body: Consumer<IsProjectsProvider>(
           builder: (context, provider, child) {
             if (provider.error != null) {
-              print('Error in IsMachinesProvider: ${provider.error}');
+              print('Error in IsProjectsProvider: ${provider.error}');
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -320,7 +343,7 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      'Error Loading Machines',
+                      'Error Loading Projects',
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
@@ -344,9 +367,9 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
                       text: 'Retry',
                       icon: Icons.refresh,
                       onTap: () {
-                        print('Retrying to load machines');
+                        print('Retrying to load projects');
                         provider.clearError();
-                        provider.fetchMachines(refresh: true);
+                        provider.fetchProjects(refresh: true);
                       },
                     ),
                   ],
@@ -356,27 +379,52 @@ class _IsMachinesListScreenState extends State<IsMachinesListScreen> {
 
             return RefreshIndicator(
               onRefresh: () async {
-                print('Refreshing machines list');
-                await provider.fetchMachines(refresh: true);
+                print('Refreshing projects list');
+                await provider.fetchProjects(refresh: true);
               },
               color: AppTheme.ironSmithPrimary,
               backgroundColor: Colors.white,
-              child: provider.isLoading && provider.machines.isEmpty
+              child: provider.isLoading && provider.projects.isEmpty
                   ? ListView.builder(
                       itemCount: 5,
                       itemBuilder: (context, index) => buildShimmerCard(),
                     )
-                  : provider.machines.isEmpty
+                  : provider.projects.isEmpty
                   ? _buildEmptyState()
                   : ListView.builder(
                       padding: EdgeInsets.only(bottom: 16.h),
-                      itemCount: provider.machines.length,
+                      itemCount: provider.projects.length,
                       itemBuilder: (context, index) {
-                        return _buildMachineCard(provider.machines[index]);
+                        return _buildProjectCard(provider.projects[index]);
                       },
                     ),
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Padding(
+      padding: EdgeInsets.only(right: 16.w),
+      child: TextButton(
+        onPressed: () {
+          context.goNamed(RouteNames.isProjectAdd);
+        },
+        child: Row(
+          children: [
+            Icon(Icons.add, size: 20.sp, color: AppTheme.ironSmithPrimary),
+            SizedBox(width: 4.w),
+            Text(
+              'Add Project',
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.ironSmithPrimary,
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -49,12 +49,6 @@ class _AddProductFormScreenState extends State<AddProductFormScreen> {
           context.showErrorSnackbar(
             "No valid plants available. Please try again later.",
           );
-        } else {
-          _formKey.currentState?.fields['plant']?.didChange(
-            productProvider.plants.firstWhere(
-              (plant) => plant['id']!.isNotEmpty,
-            )['display'],
-          );
         }
       });
     });
@@ -217,18 +211,16 @@ class _AddProductFormScreenState extends State<AddProductFormScreen> {
               labelText: 'Plant',
               hintText: 'Select Plant',
               prefixIcon: Icons.factory,
-              initialValue: productProvider.plants.isNotEmpty
-                  ? productProvider.plants.firstWhere(
-                      (plant) => plant['id']!.isNotEmpty,
-                      orElse: () => {'display': 'No valid plants'},
-                    )['display']
-                  : null,
+              // Remove the auto-selection logic
+              initialValue: null, // Keep it empty by default
+
               options: productProvider.plants.isEmpty
                   ? ['No plants available']
                   : productProvider.plants
                         .where((plant) => plant['id']!.isNotEmpty)
                         .map((plant) => plant['display']!)
                         .toList(),
+
               fillColor: const Color(0xFFF8FAFC),
               borderColor: Colors.grey.shade300,
               focusedBorderColor: const Color(0xFF3B82F6),
@@ -246,6 +238,7 @@ class _AddProductFormScreenState extends State<AddProductFormScreen> {
                 _formKey.currentState?.fields['plant']?.didChange(value);
               },
             ),
+
             SizedBox(height: 18.h),
             CustomTextFormField(
               name: 'material_code',

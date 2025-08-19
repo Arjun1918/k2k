@@ -18,7 +18,7 @@ class AppUrl {
   static const String createMachineUrl =
       '$baseUrl/api/konkreteKlinkers/helpers/machine';
   static const String fetchMachineDetailsUrl =
-      '$baseUrl/api/api/konkreteKlinkers/helpers/machines';
+      '$baseUrl/api/konkreteKlinkers/helpers/machines';
   static const String updateMachineDetailsUrl =
       '$baseUrl/api/konkreteKlinkers/helpers/machines';
   static const String deleteMachineDetailsUrl =
@@ -47,7 +47,7 @@ class AppUrl {
 
   //inventory
   static const String getinventory =
-      'http://3.6.6.231/api/konkreteKlinkers/inventories';
+      '$baseUrl/api/konkreteKlinkers/inventories';
 
   //Products's Urls
   static const String createproductUrl =
@@ -108,8 +108,7 @@ class AppUrl {
       "$baseUrl/api/konkreteKlinkers/qc-check";
   static const String getProductByjobOrder =
       "$baseUrl/api/konkreteKlinkers/qc-check/products?id=";
-  static const String getDropdownJobOrder =
-      "https://k2k.kods.work/api/dropdown/joborders";
+  static const String getDropdownJobOrder = "$baseUrl/api/dropdown/joborders";
   static const String deleteQcCheck =
       "$baseUrl/api/konkreteKlinkers/qc-check/delete";
 
@@ -159,13 +158,19 @@ class AppUrl {
   static const String getAchievedQuantity =
       "$baseUrl/api/konkreteKlinkers/transfer-getworkorderproduct";
 
-  ////////////////////////////IRON SMITH///////////////////////////////////////////////////////
+  ///////////////////////////////////////IRON SMITH//////////////////////////////////////////////////////
+
   //machines
-  static const String baseUrlIronSmith = 'https://k2k.kods.work/api/ironSmith';
-  //
+  static const String baseUrlIronSmith =
+      'https://k2k.kods.work/api/ironSmith/helpers';
 
-  static const String getIsMachines = "$baseUrl/helpers/machines";
-
-  // https://k2k.kods.work/api/ironSmith/helpers/machines
-  static const String addIsMachines = "$baseUrl/helpers/machines";
+  static const String getIsMachines = "$baseUrlIronSmith/machines";
+  static const String addIsMachines = "$baseUrlIronSmith/machines";
+  static const String deleteIsMachine = "$baseUrlIronSmith/machines/delete";
+  //clients
+  static const String getIsclients = "$baseUrlIronSmith/clients";
+  static const String deleteIsclients = "$baseUrlIronSmith/clients/delete";
+  //projects
+  static const String deleteIsProjects = "$baseUrlIronSmith/projects/delete";
+  static const String getIsProjects = "$baseUrlIronSmith/projects";
 }

@@ -15,16 +15,15 @@ class IsMachinesProvider with ChangeNotifier {
   Future<void> fetchMachines({bool refresh = false}) async {
     if (_isLoading) return;
 
-    if (refresh) {
-      _machines.clear();
-    }
-
     _isLoading = true;
+    if (refresh) {
+      _machines = []; // Clear the list for a full refresh
+    }
     notifyListeners();
 
     try {
       final newMachines = await _repository.fetchMachines();
-      _machines.addAll(newMachines);
+      _machines = newMachines; // Replace the list
       _error = null;
     } catch (e) {
       _error = e.toString();
@@ -43,9 +42,56 @@ class IsMachinesProvider with ChangeNotifier {
     try {
       await _repository.addMachine(machine);
       _error = null;
-      await fetchMachines(refresh: true);
+      await fetchMachines(refresh: true); // Refresh the list
     } catch (e) {
       _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateMachine(Machines machine) async {
+    if (_isLoading) return;
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _repository.updateMachine(machine);
+      _error = null;
+      await fetchMachines(refresh: true); // Refresh the list
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> deleteMachine(String machineId) async {
+    if (_isLoading) return false;
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final success = await _repository.deleteMachine(machineId);
+
+      if (success) {
+        // ✅ Immediately remove from local list
+        _machines.removeWhere((m) => m.id?.oid == machineId);
+        notifyListeners();
+
+        // Optional: still fetch to sync with server
+        await fetchMachines(refresh: true);
+      }
+
+      _error = null;
+      return success;
+    } catch (e) {
+      _error = e.toString();
+      return false;
     } finally {
       _isLoading = false;
       notifyListeners();

@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:k2k/Iron_smith/master_data/clients/view/is_clients_add.dart';
+import 'package:k2k/Iron_smith/master_data/clients/view/is_clients_edit.dart';
+import 'package:k2k/Iron_smith/master_data/clients/view/is_clients_list.dart';
 import 'package:k2k/Iron_smith/master_data/machines/view/machine_add.dart';
+import 'package:k2k/Iron_smith/master_data/machines/view/machine_edit.dart';
 import 'package:k2k/Iron_smith/master_data/machines/view/machine_list.dart';
+import 'package:k2k/Iron_smith/master_data/projects/view/is_project_add_screen.dart';
+import 'package:k2k/Iron_smith/master_data/projects/view/is_project_list_screen.dart';
 import 'package:k2k/app/routes_name.dart';
 import 'package:k2k/dashboard/view/dashboard_screen.dart';
 import 'package:k2k/konkrete_klinkers/dispatch/view/dispatch_add_screen.dart';
@@ -47,6 +53,8 @@ import 'package:k2k/konkrete_klinkers/work_order/view/work_order_edit_screen.dar
 import 'package:k2k/konkrete_klinkers/work_order/view/work_order_list_screen.dart';
 import 'package:k2k/login/view/login_screen.dart';
 import 'package:k2k/utils/splashscreen/splash_screen.dart';
+
+import '../Iron_smith/master_data/clients/model/Is_clients.dart';
 
 class AppRoutes {
   static final GoRouter router = GoRouter(
@@ -286,8 +294,7 @@ class AppRoutes {
         path: RouteNames.workorderdetail,
         name: RouteNames.workorderdetail,
         builder: (BuildContext context, GoRouterState state) {
-          final id =
-              state.pathParameters['id']; 
+          final id = state.pathParameters['id'];
           if (id == null) {
             return const Center(child: Text('Work Order ID is required'));
           }
@@ -421,10 +428,52 @@ class AppRoutes {
         },
       ),
       GoRoute(
+        path: RouteNames.isMachineEdit,
+        name: RouteNames.isMachineEdit,
+        builder: (context, state) =>
+            IsMachineEditScreen(machineId: state.pathParameters['machineId']!),
+      ),
+      GoRoute(
+        path: RouteNames.isClients,
+        name: RouteNames.isClients,
+        builder: (BuildContext context, GoRouterState state) {
+          return const IsClientsListScreen();
+        },
+      ),
+      GoRoute(
         path: RouteNames.ismachine,
         name: RouteNames.ismachine,
         builder: (BuildContext context, GoRouterState state) {
           return const IsMachinesListScreen();
+        },
+      ),
+      GoRoute(
+        path: RouteNames.isClientsAdd,
+        name: RouteNames.isClientsAdd,
+        builder: (BuildContext context, GoRouterState state) {
+          return const IsClientAddScreen();
+        },
+      ),
+      GoRoute(
+        path: RouteNames.isProjectAdd,
+        name: RouteNames.isProjectAdd,
+        builder: (BuildContext context, GoRouterState state) {
+          return const AddIsProjectFormScreen();
+        },
+      ),
+      GoRoute(
+        path: RouteNames.isProjetct,
+        name: RouteNames.isProjetct,
+        builder: (BuildContext context, GoRouterState state) {
+          return const IsProjectsListScreen();
+        },
+      ),
+      GoRoute(
+        path: RouteNames.isClientsEdit,
+        name: RouteNames.isClientsEdit,
+        builder: (context, state) {
+          final client = state.extra as Client;
+          return IsClientEditScreen(client: client);
         },
       ),
     ],

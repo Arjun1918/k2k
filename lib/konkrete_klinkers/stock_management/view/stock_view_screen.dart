@@ -406,13 +406,13 @@ class IconContainer extends StatelessWidget {
   final Color iconColor;
 
   const IconContainer({
-    Key? key,
+    super.key,
     required this.icon,
     this.gradientColors = const [Colors.orange, Colors.pink],
     this.size = 48,
     this.borderRadius = 12,
     this.iconColor = Colors.red,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

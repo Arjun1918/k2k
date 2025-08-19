@@ -64,10 +64,7 @@ class MachinesRepository {
       final response = await http.post(
         Uri.parse(AppUrl.addIsMachines),
         headers: headers,
-        body: jsonEncode({
-          'name': machine.name,
-          'role': machine.role,
-        }),
+        body: jsonEncode({'name': machine.name, 'role': machine.role}),
       );
 
       print('Add machine response status: ${response.statusCode}');
@@ -86,6 +83,72 @@ class MachinesRepository {
     } catch (e) {
       print('Error adding machine: $e');
       throw Exception('Error adding machine: $e');
+    }
+  }
+
+  Future<void> updateMachine(Machines machine) async {
+    try {
+      final headers = await this.headers;
+      final machineId = machine.id?.oid;
+      if (machineId == null) {
+        throw Exception('Machine ID is missing');
+      }
+      final response = await http.put(
+        Uri.parse('${AppUrl.addIsMachines}/$machineId'),
+        headers: headers,
+        body: jsonEncode({'name': machine.name, 'role': machine.role}),
+      );
+
+      print('Update machine response status: ${response.statusCode}');
+      print('Update machine response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> decoded = jsonDecode(response.body);
+        if (decoded['success'] != true) {
+          throw Exception('Failed to update machine: ${decoded['message']}');
+        }
+      } else {
+        throw Exception(
+          'Failed to update machine: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
+      print('Error updating machine: $e');
+      throw Exception('Error updating machine: $e');
+    }
+  }
+
+  Future<bool> deleteMachine(String machineId) async {
+    try {
+      final headers = await this.headers;
+      final response = await http.delete(
+        Uri.parse(AppUrl.deleteIsMachine),
+        headers: headers,
+        body: jsonEncode({
+          'ids': [
+            machineId,
+          ], 
+        }),
+      );
+
+      print('Delete machine response status: ${response.statusCode}');
+      print('Delete machine response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> decoded = jsonDecode(response.body);
+        if (decoded['success'] == true) {
+          return true;
+        } else {
+          throw Exception('Failed to delete machine: ${decoded['message']}');
+        }
+      } else {
+        throw Exception(
+          'Failed to delete machine: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
+      print('Error deleting machine: $e');
+      throw Exception('Error deleting machine: $e');
     }
   }
 }

@@ -13,7 +13,7 @@ class AppBars extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.appBarcolor, // soft icy blue-white,,
+        color: AppTheme.appBarcolor,
         borderRadius: BorderRadius.vertical(
           bottom: Radius.circular(24.r), // Rounded bottom corners
         ),

@@ -8,6 +8,7 @@ import 'package:k2k/common/widgets/appbar/app_bar.dart';
 import 'package:k2k/konkrete_klinkers/qc_check/model/qc_check.dart';
 import 'package:k2k/konkrete_klinkers/qc_check/provider/qc_check_provider.dart';
 import 'package:k2k/konkrete_klinkers/qc_check/view/qc_check_delete.dart';
+import 'package:k2k/utils/sreen_util.dart';
 import 'package:k2k/utils/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -406,6 +407,7 @@ class _QcCheckListViewState extends State<QcCheckListView> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context);
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) {

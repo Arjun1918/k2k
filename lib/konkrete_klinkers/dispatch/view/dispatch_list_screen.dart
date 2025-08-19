@@ -155,26 +155,26 @@ class _DispatchListViewState extends State<DispatchListView> {
                             ],
                           ),
                         ),
-                        PopupMenuItem<String>(
-                          value: 'delete',
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.delete_outline,
-                                size: 20.sp,
-                                color: const Color(0xFFF43F5E),
-                              ),
-                              SizedBox(width: 8.w),
-                              Text(
-                                'Delete',
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: const Color(0xFF334155),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        // PopupMenuItem<String>(
+                        //   value: 'delete',
+                        //   child: Row(
+                        //     children: [
+                        //       Icon(
+                        //         Icons.delete_outline,
+                        //         size: 20.sp,
+                        //         color: const Color(0xFFF43F5E),
+                        //       ),
+                        //       SizedBox(width: 8.w),
+                        //       Text(
+                        //         'Delete',
+                        //         style: TextStyle(
+                        //           fontSize: 14.sp,
+                        //           color: const Color(0xFF334155),
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                       ],
                       offset: Offset(0, 32.h),
                       shape: RoundedRectangleBorder(

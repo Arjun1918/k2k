@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:k2k/utils/theme.dart';
 
 class CustomCard extends StatelessWidget {
   final String title;
+  final Color? titleColor;
+
   final String? subtitle;
+  final Color? subtitleColor;
+
   final Widget leading;
-  final Color? iconColor;
   final List<PopupMenuEntry<String>>? menuItems;
   final VoidCallback? onTap;
   final List<Widget> bodyItems;
@@ -22,9 +26,11 @@ class CustomCard extends StatelessWidget {
   const CustomCard({
     super.key,
     required this.title,
+
     required this.leading,
     required this.bodyItems,
-    this.iconColor,
+    this.titleColor = Colors.black,
+    this.subtitleColor = Colors.grey,
     this.subtitle,
     this.menuItems,
     this.onTap,
@@ -98,7 +104,7 @@ class CustomCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black87,
+                            color: titleColor,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -109,7 +115,7 @@ class CustomCard extends StatelessWidget {
                           icon: Icon(
                             Icons.more_vert,
                             size: 18.sp,
-                            color: Colors.grey[600],
+                            color: AppColors.background,
                           ),
                           itemBuilder: (context) => menuItems!,
                           offset: Offset(0, 32.h),
@@ -136,7 +142,7 @@ class CustomCard extends StatelessWidget {
             ),
           ),
         ),
-  ),
-);
-}
+      ),
+    );
+  }
 }

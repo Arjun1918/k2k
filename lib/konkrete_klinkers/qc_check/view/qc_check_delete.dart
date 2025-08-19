@@ -42,6 +42,8 @@ class QcCheckDeleteHandler {
           'Are you sure you want to delete QC check with remarks "$remarks"?\n\nThis action cannot be undone.',
           style: TextStyle(fontSize: 14.sp, color: const Color(0xFF64748B)),
         ),
+
+        
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
@@ -59,10 +61,10 @@ class QcCheckDeleteHandler {
                         try {
                           // Call delete method
                           await provider.deleteQcCheck(qcCheckId);
-                          
+
                           // Close the dialog first
                           Navigator.pop(dialogContext);
-                          
+
                           // Use the original context (not dialogContext) for snackbar
                           // Check if the deletion was successful
                           if (provider.error == null) {
@@ -73,15 +75,13 @@ class QcCheckDeleteHandler {
                             }
                           } else {
                             if (context.mounted) {
-                              context.showErrorSnackbar(
-                                provider.error!,
-                              );
+                              context.showErrorSnackbar(provider.error!);
                             }
                           }
                         } catch (e) {
                           // Close the dialog first
                           Navigator.pop(dialogContext);
-                          
+
                           // Show error message using original context
                           if (context.mounted) {
                             context.showErrorSnackbar(
@@ -95,7 +95,10 @@ class QcCheckDeleteHandler {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.r),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
+                  ),
                 ),
                 child: provider.isDeleteQcCheckLoading
                     ? SizedBox(

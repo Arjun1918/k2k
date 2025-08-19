@@ -49,7 +49,7 @@ class _QcCheckEditScreenState extends State<QcCheckEditScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-       canPop: false,
+      canPop: false,
       onPopInvoked: (didPop) {
         if (!didPop) {
           context.go(RouteNames.qcCheck);
@@ -114,7 +114,10 @@ class _QcCheckEditScreenState extends State<QcCheckEditScreen> {
   }
 
   Widget _buildFormCard(
-      BuildContext context, QcCheckProvider provider, QcCheckModel qcCheck) {
+    BuildContext context,
+    QcCheckProvider provider,
+    QcCheckModel qcCheck,
+  ) {
     return Container(
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
@@ -197,13 +200,14 @@ class _QcCheckEditScreenState extends State<QcCheckEditScreen> {
               hintText: provider.isWorkOrderAndProductsLoading
                   ? 'Loading Work Order...'
                   : provider.workOrder == null
-                      ? 'Select Job Order First'
-                      : 'Select Work Order',
+                  ? 'Select Job Order First'
+                  : 'Select Work Order',
               prefixIcon: Icons.work,
               options: provider.workOrder != null
                   ? [provider.workOrder!['work_order_number']!]
                   : [],
-              enabled: !provider.isWorkOrderAndProductsLoading &&
+              enabled:
+                  !provider.isWorkOrderAndProductsLoading &&
                   provider.workOrder != null,
               fillColor: const Color(0xFFF8FAFC),
               borderColor: Colors.grey.shade300,
@@ -325,27 +329,32 @@ class _QcCheckEditScreenState extends State<QcCheckEditScreen> {
                           (job) => job['job_order_id'] == formData['job_order'],
                           orElse: () => {
                             '_id': qcCheck.jobOrder ?? '',
-                            'job_order_id': formData['job_order'] ?? 'N/A'
+                            'job_order_id': formData['job_order'] ?? 'N/A',
                           },
                         );
 
                         final qcCheckData = {
                           'job_order': selectedJob['_id'],
-                          'work_order': provider.workOrder?['_id'] ??
+                          'work_order':
+                              provider.workOrder?['_id'] ??
                               qcCheck.workOrder ??
                               '',
                           'product_id': qcCheck.productId ?? '',
-                          'rejected_quantity':
-                              int.parse(formData['rejected_quantity']),
-                          'recycled_quantity':
-                              int.parse(formData['recycled_quantity']),
+                          'rejected_quantity': int.parse(
+                            formData['rejected_quantity'],
+                          ),
+                          'recycled_quantity': int.parse(
+                            formData['recycled_quantity'],
+                          ),
                           'remarks': formData['rejected_reasons'],
                           'updated_by': qcCheck.updatedBy ?? '',
                         };
-
                         try {
                           await provider.updateQcCheck(
-                              widget.qcCheckId, qcCheckData);
+                            widget.qcCheckId,
+                            qcCheckData,
+                          );
+                          
                           if (provider.error == null) {
                             context.showSuccessSnackbar(
                               'QC Check updated successfully',
